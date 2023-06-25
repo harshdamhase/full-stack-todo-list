@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 import mongoose from "mongoose";
 import dotenv  from "dotenv";
 dotenv.config();
@@ -41,7 +41,7 @@ app.post('/task', async (req,res)=>{
     })
 })
 
-//get Task
+//get Task 
 
 app.get('/tasks', async (req, res)=>{
     const tasks = await Task.find();
@@ -52,7 +52,42 @@ app.get('/tasks', async (req, res)=>{
         data: tasks
     })
 });
-//get task
+//get  specific task
+
+app.get('/task', async (req, res) =>{
+    const taskId = req.query.taskId;
+
+    let task = await Task.findById({taskId})
+
+    if(!task){
+        return res.json({
+            success: false,
+            message: "Task not found",
+            data: []
+
+        })
+    }
+    res.json({
+        success: true,
+        message: "Task successfully fetched",
+        data: task
+    })
+})
+
+app.post("/task/delete",async (req,res) =>{
+    const {taskId} = req.body;
+
+    await Task.deleteOne({
+        _id: taskId
+
+    })
+    res.json({
+        success: true,
+        message: "Task deleted successfully"
+    })
+})
+
+
 
 //put Task
 
